@@ -20,6 +20,7 @@
 </div>
 
 # Overview
+NOTE: This is a Fork of the Repo that I'm using to build off of for my COS598A final project.
 
 Intention-Conditioned Flow Occupancy Models (InFOM) is a latent variable model for pre-training and fine-tuning in reinforcement learning. (Left) The datasets are collected by users performing distinct tasks. (Center) We encode intentions by maximizing an evidence lower bound of data likelihood, (Right) enabling intention-aware future prediction using *flow matching*.
 
