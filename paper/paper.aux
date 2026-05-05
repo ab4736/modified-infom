@@ -1,0 +1,256 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{zheng2025infom}
+\citation{kingma2013vae}
+\citation{vaswani2017attention}
+\citation{espeholt2018impala}
+\citation{bradbury2018jax}
+\citation{park2025ogbench}
+\citation{park2025ogbench}
+\citation{ghosh2023passive}
+\citation{zheng2025infom}
+\citation{lipman2023flow}
+\citation{farebrother2025tdflows}
+\citation{kingma2013vae}
+\citation{rakelly2019pearl}
+\citation{duan2016rl2}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{1}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Contributions.}{1}{paragraph*.2}\protected@file@percent }
+\citation{rakelly2019pearl}
+\citation{duan2016rl2}
+\citation{chen2021dt}
+\citation{reed2022gato}
+\citation{espeholt2018impala}
+\citation{zheng2025infom}
+\citation{bradbury2018jax}
+\citation{park2025ogbench}
+\citation{dayan1993successor}
+\citation{janner2020gamma}
+\citation{touati2021fb}
+\citation{eysenbach2022contrastive}
+\citation{zheng2024cdpc}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces System overview. \textbf  {Blue shading}: new contributions. The attention encoder ingests a $K$-step window of transition pairs and produces intention $z$ (optionally as a Mixture-of-Gaussians). The flow occupancy model is frozen during fine-tuning; the actor is trained with advantage signals from it and conditioned on $z$. At test time (\textbf  {online-$z$}), $z$ is freshly inferred from the agent's own rolling buffer rather than from dataset annotations.\relax }}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{2}{System overview. \textbf {Blue shading}: new contributions. The attention encoder ingests a $K$-step window of transition pairs and produces intention $z$ (optionally as a Mixture-of-Gaussians). The flow occupancy model is frozen during fine-tuning; the actor is trained with advantage signals from it and conditioned on $z$. At test time (\textbf {online-$z$}), $z$ is freshly inferred from the agent's own rolling buffer rather than from dataset annotations.\relax }{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Code attribution.}{2}{paragraph*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background}{2}{section.2}\protected@file@percent }
+\newlabel{sec:background}{{2}{2}{Background}{section.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Problem setting.}{2}{paragraph*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Discounted state occupancy.}{2}{paragraph*.5}\protected@file@percent }
+\citation{barreto2017sf}
+\citation{touati2021fb}
+\citation{lipman2023flow}
+\citation{liu2023rectified}
+\citation{albergo2023stochastic}
+\citation{ma2023vip}
+\citation{farebrother2025tdflows}
+\citation{bradbury2018jax}
+\citation{zheng2025infom}
+\citation{kingma2013vae}
+\citation{kostrikov2021iql}
+\citation{bishop2006prml}
+\citation{bengio2013estimating}
+\citation{vaswani2017attention}
+\@writefile{toc}{\contentsline {paragraph}{Flow matching and TD flows.}{3}{paragraph*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{InFOM.}{3}{paragraph*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{3}{section.3}\protected@file@percent }
+\newlabel{sec:method}{{3}{3}{Method}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Mixture-of-Gaussians Encoder}{3}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:mog}{{3.1}{3}{Mixture-of-Gaussians Encoder}{subsection.3.1}{}}
+\newlabel{eq:mog}{{2}{3}{Mixture-of-Gaussians Encoder}{equation.3.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Training.}{3}{paragraph*.8}\protected@file@percent }
+\newlabel{eq:mogkl}{{3}{3}{Training}{equation.3.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Attention Encoder}{3}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:attention}{{3.2}{3}{Attention Encoder}{subsection.3.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Input construction.}{3}{paragraph*.9}\protected@file@percent }
+\citation{rakelly2019pearl}
+\citation{zheng2022odt}
+\citation{espeholt2018impala}
+\citation{park2025ogbench}
+\@writefile{toc}{\contentsline {paragraph}{Architecture.}{4}{paragraph*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Boundary-Aware Attention Encoder}{4}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:boundary}{{3.3}{4}{Boundary-Aware Attention Encoder}{subsection.3.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Phase detection.}{4}{paragraph*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Online-$z$ Conditioning}{4}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:onlinez}{{3.4}{4}{Online-$z$ Conditioning}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Training.}{4}{paragraph*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Inference.}{4}{paragraph*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Pixel Observation Support}{4}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:visual}{{3.5}{4}{Pixel Observation Support}{subsection.3.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{(1) Lazy normalization.}{4}{paragraph*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(2) Flow goal clipping.}{4}{paragraph*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{(3) Window channel consistency.}{4}{paragraph*.16}\protected@file@percent }
+\citation{zheng2025infom}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Task success rates on OGBench (higher is better). Mean $\pm $ std where multiple seeds are available; single entry otherwise. \textbf  {Bold}: best per column. $\dag  $: run converging at time of writing.\relax }}{5}{table.caption.17}\protected@file@percent }
+\newlabel{tab:main}{{1}{5}{Task success rates on OGBench (higher is better). Mean $\pm $ std where multiple seeds are available; single entry otherwise. \textbf {Bold}: best per column. $\dag $: run converging at time of writing.\relax }{table.caption.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{5}{section.4}\protected@file@percent }
+\newlabel{sec:experiments}{{4}{5}{Experiments}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Environments and Datasets}{5}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:envs}{{4.1}{5}{Environments and Datasets}{subsection.4.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Baselines and Variants}{5}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:variants}{{4.2}{5}{Baselines and Variants}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Main Results}{5}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:main}{{4.3}{5}{Main Results}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Scene3.}{5}{paragraph*.18}\protected@file@percent }
+\citation{tarasov2023revisiting}
+\citation{maaten2008tsne}
+\citation{maaten2008tsne}
+\citation{maaten2008tsne}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces t-SNE\nobreakspace  {}\cite  {maaten2008tsne} of latent intentions $z$ sampled from 4000 scene3 transitions, colored by normalized position within each trajectory (purple=start, yellow=end). Left: \textsc  {MLP} encoder. Right: \textsc  {Att-w4} encoder. The attention encoder produces more structured clusters aligned with behavioral phases.\relax }}{6}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:tsne}{{2}{6}{t-SNE~\cite {maaten2008tsne} of latent intentions $z$ sampled from 4000 scene3 transitions, colored by normalized position within each trajectory (purple=start, yellow=end). Left: \textsc {MLP} encoder. Right: \textsc {Att-w4} encoder. The attention encoder produces more structured clusters aligned with behavioral phases.\relax }{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {paragraph}{Cube2.}{6}{paragraph*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Puzzle.}{6}{paragraph*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Summary.}{6}{paragraph*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Qualitative Analysis: Latent Intention Structure}{6}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:tsne}{{4.4}{6}{Qualitative Analysis: Latent Intention Structure}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Window Size Ablation}{6}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:window}{{4.5}{6}{Window Size Ablation}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Boundary-Aware Attention Ablation}{6}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:boundary_ablation}{{4.6}{6}{Boundary-Aware Attention Ablation}{subsection.4.6}{}}
+\citation{ghosh2021gcsl}
+\citation{yang2021wgcsl}
+\citation{park2023hiql}
+\citation{eysenbach2022contrastive}
+\citation{zheng2024stabilizing}
+\citation{park2025ogbench}
+\citation{kostrikov2021iql}
+\citation{park2023hiql}
+\citation{zheng2025infom}
+\citation{ghosh2023passive}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Scene3 finetuning learning curves for each attention window size (offline $z$). The MLP baseline (\textsc  {MLP} mean) is shown in blue. Non-monotone dependence on $K$ motivates online-$z$.\relax }}{7}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:window_ablation}{{3}{7}{Scene3 finetuning learning curves for each attention window size (offline $z$). The MLP baseline (\textsc {MLP} mean) is shown in blue. Non-monotone dependence on $K$ motivates online-$z$.\relax }{figure.caption.23}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Standard vs.\ boundary-aware attention on scene3 (offline $z$, seed 0).\relax }}{7}{table.caption.24}\protected@file@percent }
+\newlabel{tab:boundary}{{2}{7}{Standard vs.\ boundary-aware attention on scene3 (offline $z$, seed 0).\relax }{table.caption.24}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Online-$z$ vs.\ Offline-$z$ Learning Curves}{7}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:curves}{{4.7}{7}{Online-$z$ vs.\ Offline-$z$ Learning Curves}{subsection.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Cross-Environment Summary}{7}{subsection.4.8}\protected@file@percent }
+\newlabel{sec:bar}{{4.8}{7}{Cross-Environment Summary}{subsection.4.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}Visual Observation Engineering}{7}{subsection.4.9}\protected@file@percent }
+\newlabel{sec:visual_exp}{{4.9}{7}{Visual Observation Engineering}{subsection.4.9}{}}
+\citation{touati2021fb}
+\citation{park2024hilp}
+\citation{eysenbach2018diayn}
+\citation{sharma2019dads}
+\citation{touati2021fb}
+\citation{touati2023does}
+\citation{kingma2013vae}
+\citation{dayan1993successor}
+\citation{barreto2017sf}
+\citation{barreto2018transfer}
+\citation{farebrother2025tdflows}
+\citation{park2025flowq}
+\citation{dong2025valueflows}
+\citation{zheng2025infom}
+\citation{farebrother2025tdflows}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Fine-tuning learning curves on scene3: online-$z$ variants (dashed) vs.\ offline-$z$ baselines (solid). Shaded bands show $\pm $1 std over 2--3 seeds. The vertical dotted line marks the finetuning start (1\,M steps).\relax }}{8}{figure.caption.25}\protected@file@percent }
+\newlabel{fig:curves}{{4}{8}{Fine-tuning learning curves on scene3: online-$z$ variants (dashed) vs.\ offline-$z$ baselines (solid). Shaded bands show $\pm $1 std over 2--3 seeds. The vertical dotted line marks the finetuning start (1\,M steps).\relax }{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Related Work}{8}{section.5}\protected@file@percent }
+\newlabel{sec:related}{{5}{8}{Related Work}{section.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Offline goal-conditioned RL.}{8}{paragraph*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Offline unsupervised and zero-shot RL.}{8}{paragraph*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Successor representations and occupancy models.}{8}{paragraph*.29}\protected@file@percent }
+\citation{chen2021dt}
+\citation{reed2022gato}
+\citation{zheng2022odt}
+\citation{rakelly2019pearl}
+\citation{duan2016rl2}
+\citation{hausman2017multimodal}
+\citation{li2017infogail}
+\citation{tishby2000ib}
+\citation{alemi2017dvib}
+\citation{yang2016hierarchical}
+\citation{devlin2018bert}
+\citation{espeholt2018impala}
+\citation{laskin2020curl}
+\citation{nair2023r3m}
+\citation{parisi2022pretrained}
+\citation{xiao2022masked}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Final success rates across all four evaluation environments. \textsc  {MLP} is the strongest baseline on Cube-double and Puzzle-3x3; online-$z$ variants (\textsc  {OZ-MLP}, \textsc  {OZ-Att-w4}) provide the best results on Scene3. All methods fail on Scene4 (not shown: all $\leq 0.04$), motivating overnight online-$z$ runs on that task.\relax }}{9}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:bar}{{5}{9}{Final success rates across all four evaluation environments. \textsc {MLP} is the strongest baseline on Cube-double and Puzzle-3x3; online-$z$ variants (\textsc {OZ-MLP}, \textsc {OZ-Att-w4}) provide the best results on Scene3. All methods fail on Scene4 (not shown: all $\leq 0.04$), motivating overnight online-$z$ runs on that task.\relax }{figure.caption.26}{}}
+\@writefile{toc}{\contentsline {paragraph}{Temporal context and sequence modeling.}{9}{paragraph*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Mixture and structured latent models.}{9}{paragraph*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Visual RL.}{9}{paragraph*.32}\protected@file@percent }
+\citation{janner2022diffuser}
+\citation{chi2023diffusionpolicy}
+\citation{park2025flowq}
+\citation{dong2025valueflows}
+\citation{zheng2025infom}
+\citation{rakelly2019pearl}
+\citation{rombach2022ldm}
+\@writefile{toc}{\contentsline {paragraph}{RL with flow-matching and diffusion.}{10}{paragraph*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Conclusion}{10}{section.6}\protected@file@percent }
+\newlabel{sec:conclusion}{{6}{10}{Discussion and Conclusion}{section.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{10}{paragraph*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Future work.}{10}{paragraph*.35}\protected@file@percent }
+\bibdata{references}
+\bibcite{albergo2023stochastic}{Albergo and Vanden-Eijnden(2023)}
+\bibcite{alemi2017dvib}{Alemi et\nobreakspace  {}al.(2017)Alemi, Fischer, Dillon, and Murphy}
+\bibcite{barreto2017sf}{Barreto et\nobreakspace  {}al.(2017)Barreto, Dabney, Munos, Hunt, Schaul, van Hasselt, and Silver}
+\bibcite{barreto2018transfer}{Barreto et\nobreakspace  {}al.(2018)Barreto, Borsa, Quan, Schaul, Silver, Hessel, Mankowitz, Zidek, and Munos}
+\bibcite{bengio2013estimating}{Bengio et\nobreakspace  {}al.(2013)Bengio, L{\'e}onard, and Courville}
+\bibcite{bishop2006prml}{Bishop(2006)}
+\bibcite{bradbury2018jax}{Bradbury et\nobreakspace  {}al.(2018)Bradbury, Frostig, Hawkins, Johnson, Leary, Maclaurin, Necula, Paszke, VanderPlas, Wanderman-Milne, and Zhang}
+\bibcite{chen2021dt}{Chen et\nobreakspace  {}al.(2021)Chen, Lu, Rajeswaran, Lee, Grover, Laskin, Abbeel, Srinivas, and Mordatch}
+\bibcite{chi2023diffusionpolicy}{Chi et\nobreakspace  {}al.(2023)Chi, Feng, Du, Xu, Cousineau, Burchfiel, and Song}
+\bibcite{dayan1993successor}{Dayan(1993)}
+\bibcite{devlin2018bert}{Devlin et\nobreakspace  {}al.(2019)Devlin, Chang, Lee, and Toutanova}
+\bibcite{dong2025valueflows}{Dong et\nobreakspace  {}al.(2025)Dong, Zheng, Finn, Sadigh, and Eysenbach}
+\bibcite{duan2016rl2}{Duan et\nobreakspace  {}al.(2016)Duan, Schulman, Chen, Bartlett, Sutskever, and Abbeel}
+\bibcite{espeholt2018impala}{Espeholt et\nobreakspace  {}al.(2018)Espeholt, Soyer, Munos, Simonyan, Mnih, Ward, Doron, Firoiu, Harley, Dunning, et\nobreakspace  {}al.}
+\bibcite{eysenbach2018diayn}{Eysenbach et\nobreakspace  {}al.(2019)Eysenbach, Gupta, Ibarz, and Levine}
+\bibcite{eysenbach2022contrastive}{Eysenbach et\nobreakspace  {}al.(2022)Eysenbach, Zhang, Levine, and Salakhutdinov}
+\bibcite{farebrother2025tdflows}{Farebrother et\nobreakspace  {}al.(2025)Farebrother, Pirotta, Tirinzoni, Munos, Lazaric, and Touati}
+\bibcite{ghosh2021gcsl}{Ghosh et\nobreakspace  {}al.(2021)Ghosh, Gupta, Reddy, Fu, Devin, Eysenbach, and Levine}
+\bibcite{ghosh2023passive}{Ghosh et\nobreakspace  {}al.(2023)Ghosh, Bhateja, and Levine}
+\bibcite{hausman2017multimodal}{Hausman et\nobreakspace  {}al.(2017)Hausman, Chebotar, Schaal, Sukhatme, and Lim}
+\bibcite{janner2020gamma}{Janner et\nobreakspace  {}al.(2020)Janner, Mordatch, and Levine}
+\bibcite{janner2022diffuser}{Janner et\nobreakspace  {}al.(2022)Janner, Du, Tenenbaum, and Levine}
+\bibcite{kingma2013vae}{Kingma and Welling(2013)}
+\bibcite{kostrikov2021iql}{Kostrikov et\nobreakspace  {}al.(2022)Kostrikov, Nair, and Levine}
+\bibcite{laskin2020curl}{Laskin et\nobreakspace  {}al.(2020)Laskin, Srinivas, and Abbeel}
+\bibcite{li2017infogail}{Li et\nobreakspace  {}al.(2017)Li, Song, and Ermon}
+\bibcite{lipman2023flow}{Lipman et\nobreakspace  {}al.(2023)Lipman, Chen, Ben-Hamu, Nickel, and Le}
+\bibcite{liu2023rectified}{Liu et\nobreakspace  {}al.(2023)Liu, Gong, and Liu}
+\bibcite{ma2023vip}{Ma et\nobreakspace  {}al.(2023)Ma, Sodhani, Jayaraman, Bastani, Kumar, and Zhang}
+\bibcite{nair2023r3m}{Nair et\nobreakspace  {}al.(2023)Nair, Rajeswaran, Kumar, Finn, and Gupta}
+\bibcite{parisi2022pretrained}{Parisi et\nobreakspace  {}al.(2022)Parisi, Rajeswaran, Purushwalkam, and Gupta}
+\bibcite{park2023hiql}{Park et\nobreakspace  {}al.(2023)Park, Ghosh, Eysenbach, and Levine}
+\bibcite{park2024hilp}{Park et\nobreakspace  {}al.(2024)Park, Kreiman, and Levine}
+\bibcite{park2025ogbench}{Park et\nobreakspace  {}al.(2025{a})Park, Frans, Eysenbach, and Levine}
+\bibcite{park2025flowq}{Park et\nobreakspace  {}al.(2025{b})Park, Li, and Levine}
+\bibcite{rakelly2019pearl}{Rakelly et\nobreakspace  {}al.(2019)Rakelly, Zhou, Finn, Levine, and Quillen}
+\bibcite{reed2022gato}{Reed et\nobreakspace  {}al.(2022)Reed, Zolna, Parisotto, Colmenarejo, Novikov, Barth-Maron, Gimenez, Sulsky, Kay, Springenberg, et\nobreakspace  {}al.}
+\bibcite{rombach2022ldm}{Rombach et\nobreakspace  {}al.(2022)Rombach, Blattmann, Lorenz, Esser, and Ommer}
+\bibcite{sharma2019dads}{Sharma et\nobreakspace  {}al.(2019)Sharma, Gu, Levine, Kumar, and Hausman}
+\bibcite{tarasov2023revisiting}{Tarasov et\nobreakspace  {}al.(2023)Tarasov, Kurenkov, Nikulin, and Kolesnikov}
+\bibcite{tishby2000ib}{Tishby et\nobreakspace  {}al.(2000)Tishby, Pereira, and Bialek}
+\bibcite{touati2021fb}{Touati and Ollivier(2021)}
+\bibcite{touati2023does}{Touati et\nobreakspace  {}al.(2023)Touati, Rapin, and Ollivier}
+\bibcite{maaten2008tsne}{van\nobreakspace  {}der Maaten and Hinton(2008)}
+\bibcite{vaswani2017attention}{Vaswani et\nobreakspace  {}al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}
+\bibcite{xiao2022masked}{Xiao et\nobreakspace  {}al.(2022)Xiao, Radosavovic, Darrell, and Malik}
+\bibcite{yang2021wgcsl}{Yang et\nobreakspace  {}al.(2022)Yang, Lu, Li, Sun, Fang, Du, Li, Han, and Zhang}
+\bibcite{yang2016hierarchical}{Yang et\nobreakspace  {}al.(2016)Yang, Yang, Dyer, He, Smola, and Hovy}
+\bibcite{zheng2024stabilizing}{Zheng et\nobreakspace  {}al.(2024{a})Zheng, Eysenbach, Walke, Yin, Fang, Salakhutdinov, and Levine}
+\bibcite{zheng2024cdpc}{Zheng et\nobreakspace  {}al.(2024{b})Zheng, Salakhutdinov, and Eysenbach}
+\bibcite{zheng2025infom}{Zheng et\nobreakspace  {}al.(2025)}
+\bibcite{zheng2022odt}{Zheng et\nobreakspace  {}al.(2022)Zheng, Zhang, and Grover}
+\bibstyle{plainnat}
+\gdef \@abspage@last{14}

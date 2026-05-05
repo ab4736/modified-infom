@@ -1,7 +1,9 @@
 from typing import Any, Optional, Sequence
 
 import distrax
+import flax.struct
 import flax.linen as nn
+import jax
 import jax.numpy as jnp
 
 
@@ -80,6 +82,49 @@ class LogParam(nn.Module):
     def __call__(self):
         log_value = self.param('log_value', init_fn=lambda key: jnp.full((), jnp.log(self.init_value)))
         return jnp.exp(log_value)
+
+
+@flax.struct.dataclass
+class MixtureIntentionDistribution:
+    """Lightweight mixture of diagonal Gaussians."""
+
+    means: jnp.ndarray
+    log_stds: jnp.ndarray
+    logits: jnp.ndarray
+
+    def mixing_probs(self):
+        return jax.nn.softmax(self.logits, axis=-1)
+
+    def sample(self, seed, sample_shape=()):
+        if sample_shape is None:
+            sample_shape = ()
+        elif isinstance(sample_shape, int):
+            sample_shape = (sample_shape,)
+        else:
+            sample_shape = tuple(sample_shape)
+
+        eps = jax.random.normal(seed, shape=sample_shape + self.means.shape)
+        component_samples = self.means + jnp.exp(self.log_stds) * eps
+        weights = self.mixing_probs()
+        weights = weights.reshape((1,) * len(sample_shape) + weights.shape + (1,))
+        return jnp.sum(weights * component_samples, axis=-2)
+
+    def mean(self):
+        weights = self.mixing_probs()[..., None]
+        return jnp.sum(weights * self.means, axis=-2)
+
+    def stddev(self):
+        weights = self.mixing_probs()[..., None]
+        component_vars = jnp.exp(2.0 * self.log_stds)
+        second_moment = jnp.sum(weights * (component_vars + self.means**2), axis=-2)
+        variance = jnp.maximum(second_moment - self.mean()**2, 1e-8)
+        return jnp.sqrt(variance)
+
+    def kl_loss(self):
+        kl_per_dim = 0.5 * (
+            self.means**2 + jnp.exp(2.0 * self.log_stds) - 1.0 - 2.0 * self.log_stds
+        )
+        return jnp.sum(kl_per_dim, axis=-1).mean()
 
 
 class TransformedWithMode(distrax.Transformed):
@@ -182,18 +227,22 @@ class Actor(nn.Module):
     def __call__(
         self,
         observations,
+        latents=None,
         temperature=1.0,
     ):
         """Return action distributions.
 
         Args:
             observations: Observations.
+            latents: Optional intention latent vector to concatenate with observations.
             temperature: Scaling factor for the standard deviation.
         """
         if self.encoder is not None:
             inputs = self.encoder(observations)
         else:
             inputs = observations
+        if latents is not None:
+            inputs = jnp.concatenate([inputs, latents], axis=-1)
         outputs = self.actor_net(inputs)
 
         means = self.mean_net(outputs)
@@ -226,13 +275,15 @@ class IntentionEncoder(nn.Module):
 
     hidden_dims: Sequence[int]
     latent_dim: int
+    num_components: int = 1
     layer_norm: bool = False
     encoder: nn.Module = None
 
     def setup(self):
         self.trunk_net = MLP(self.hidden_dims, activate_final=True, layer_norm=self.layer_norm)
-        self.mean_net = nn.Dense(self.latent_dim, kernel_init=default_init())
-        self.log_std_net = nn.Dense(self.latent_dim, kernel_init=default_init())
+        self.mean_net = nn.Dense(self.num_components * self.latent_dim, kernel_init=default_init())
+        self.log_std_net = nn.Dense(self.num_components * self.latent_dim, kernel_init=default_init())
+        self.logits_net = nn.Dense(self.num_components, kernel_init=default_init())
 
     def __call__(
         self,
@@ -252,10 +303,168 @@ class IntentionEncoder(nn.Module):
 
         means = self.mean_net(outputs)
         log_stds = self.log_std_net(outputs)
+        logits = self.logits_net(outputs)
 
-        distribution = distrax.MultivariateNormalDiag(loc=means, scale_diag=jnp.exp(log_stds))
+        batch_shape = means.shape[:-1]
+        means = means.reshape(*batch_shape, self.num_components, self.latent_dim)
+        log_stds = log_stds.reshape(*batch_shape, self.num_components, self.latent_dim)
+
+        distribution = MixtureIntentionDistribution(means=means, log_stds=log_stds, logits=logits)
 
         return distribution
+
+
+class AttentionIntentionEncoder(nn.Module):
+    """Transformer-based intention encoder over a window of consecutive transitions.
+
+    Encodes a sequence of K (observation, action) pairs into a latent intention z,
+    allowing the model to infer which phase of a multi-step task the agent is in.
+
+    Attributes:
+        hidden_dims: Hidden layer dimensions; last dim is the Transformer model dim.
+        latent_dim: Dimension of the output latent variable z.
+        window_size: Number of consecutive transitions in the context window.
+        num_heads: Number of self-attention heads.
+        num_layers: Number of Transformer encoder layers.
+        layer_norm: Whether to apply layer norm to the input projection.
+        encoder: Optional observation encoder (e.g. for pixel inputs).
+    """
+
+    hidden_dims: Sequence[int]
+    latent_dim: int
+    window_size: int = 4
+    num_heads: int = 4
+    num_layers: int = 2
+    layer_norm: bool = False
+    encoder: nn.Module = None
+
+    @nn.compact
+    def __call__(self, observations, actions):
+        # observations: [B, K, obs_dim] or [B, K, H, W, C], actions: [B, K, act_dim]
+        if self.encoder is not None:
+            B, K = observations.shape[0], observations.shape[1]
+            obs_shape = observations.shape[2:]  # (obs_dim,) or (H, W, C)
+            observations = self.encoder(observations.reshape(B * K, *obs_shape)).reshape(B, K, -1)
+
+        x = jnp.concatenate([observations, actions], axis=-1)  # [B, K, obs+act]
+        model_dim = self.hidden_dims[-1]
+
+        x = nn.Dense(model_dim, kernel_init=default_init())(x)  # [B, K, model_dim]
+        if self.layer_norm:
+            x = nn.LayerNorm()(x)
+
+        pos_emb = self.param(
+            'pos_emb', nn.initializers.normal(0.02), (self.window_size, model_dim))
+        x = x + pos_emb  # broadcast over batch
+
+        for _ in range(self.num_layers):
+            # Self-attention sub-layer with pre-norm and residual
+            h = nn.LayerNorm()(x)
+            h = nn.MultiHeadDotProductAttention(
+                num_heads=self.num_heads,
+                kernel_init=default_init(),
+            )(h)
+            x = x + h
+            # Feed-forward sub-layer with pre-norm and residual
+            h = nn.LayerNorm()(x)
+            h = nn.Dense(model_dim * 4, kernel_init=default_init())(h)
+            h = nn.gelu(h)
+            h = nn.Dense(model_dim, kernel_init=default_init())(h)
+            x = x + h
+
+        # Pool from the last (most recent) token — encodes the current phase
+        h = x[:, -1, :]  # [B, model_dim]
+
+        means = nn.Dense(self.latent_dim, kernel_init=default_init())(h)
+        log_stds = nn.Dense(self.latent_dim, kernel_init=default_init())(h)
+        log_stds = jnp.clip(log_stds, -5, 2)
+
+        # Return single-component MixtureIntentionDistribution for unified interface
+        means = means[:, None, :]       # [B, 1, latent_dim]
+        log_stds = log_stds[:, None, :] # [B, 1, latent_dim]
+        logits = jnp.zeros((*h.shape[:-1], 1))  # [B, 1]
+        return MixtureIntentionDistribution(means=means, log_stds=log_stds, logits=logits)
+
+
+class BoundaryAttentionIntentionEncoder(nn.Module):
+    """Transformer intention encoder with phase-boundary masking.
+
+    Same as AttentionIntentionEncoder but restricts self-attention to within
+    detected phase boundaries. Boundaries are identified by large observation
+    deltas (adaptive 75th-percentile threshold per window), so the last token
+    only attends to transitions in the same behavioral phase.
+    """
+
+    hidden_dims: Sequence[int]
+    latent_dim: int
+    window_size: int = 8
+    num_heads: int = 4
+    num_layers: int = 2
+    layer_norm: bool = False
+    encoder: nn.Module = None
+
+    @nn.compact
+    def __call__(self, observations, actions):
+        # observations: [B, K, obs_dim] or [B, K, H, W, C], actions: [B, K, act_dim]
+        if self.encoder is not None:
+            B, K = observations.shape[0], observations.shape[1]
+            obs_shape = observations.shape[2:]  # (obs_dim,) or (H, W, C)
+            observations = self.encoder(observations.reshape(B * K, *obs_shape)).reshape(B, K, -1)
+
+        # Detect phase boundaries via observation deltas
+        deltas = jnp.linalg.norm(
+            observations[:, 1:, :] - observations[:, :-1, :], axis=-1
+        )  # [B, K-1]
+        # Adaptive threshold: 75th percentile within each window
+        threshold = jnp.percentile(deltas, 75, axis=-1, keepdims=True)  # [B, 1]
+        is_boundary = deltas > threshold  # [B, K-1]
+
+        # Assign segment IDs: increment at each boundary
+        boundary_padded = jnp.concatenate(
+            [jnp.zeros((observations.shape[0], 1), dtype=jnp.int32),
+             is_boundary.astype(jnp.int32)], axis=1
+        )  # [B, K]
+        segment_ids = jnp.cumsum(boundary_padded, axis=1)  # [B, K]
+
+        # Boolean attention mask: attend only within the same segment
+        # [B, K, K] -> [B, 1, K, K] to broadcast over heads
+        attn_mask = (segment_ids[:, :, None] == segment_ids[:, None, :])  # [B, K, K]
+        attn_mask = attn_mask[:, None, :, :]  # [B, 1, K, K]
+
+        x = jnp.concatenate([observations, actions], axis=-1)
+        model_dim = self.hidden_dims[-1]
+
+        x = nn.Dense(model_dim, kernel_init=default_init())(x)
+        if self.layer_norm:
+            x = nn.LayerNorm()(x)
+
+        pos_emb = self.param(
+            'pos_emb', nn.initializers.normal(0.02), (self.window_size, model_dim))
+        x = x + pos_emb
+
+        for _ in range(self.num_layers):
+            h = nn.LayerNorm()(x)
+            h = nn.MultiHeadDotProductAttention(
+                num_heads=self.num_heads,
+                kernel_init=default_init(),
+            )(h, mask=attn_mask)
+            x = x + h
+            h = nn.LayerNorm()(x)
+            h = nn.Dense(model_dim * 4, kernel_init=default_init())(h)
+            h = nn.gelu(h)
+            h = nn.Dense(model_dim, kernel_init=default_init())(h)
+            x = x + h
+
+        h = x[:, -1, :]  # last token = most recent transition
+
+        means = nn.Dense(self.latent_dim, kernel_init=default_init())(h)
+        log_stds = nn.Dense(self.latent_dim, kernel_init=default_init())(h)
+        log_stds = jnp.clip(log_stds, -5, 2)
+
+        means = means[:, None, :]
+        log_stds = log_stds[:, None, :]
+        logits = jnp.zeros((*h.shape[:-1], 1))
+        return MixtureIntentionDistribution(means=means, log_stds=log_stds, logits=logits)
 
 
 class VectorField(nn.Module):

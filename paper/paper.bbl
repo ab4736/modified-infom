@@ -1,0 +1,341 @@
+\begin{thebibliography}{52}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Albergo and Vanden-Eijnden(2023)]{albergo2023stochastic}
+Michael~Samuel Albergo and Eric Vanden-Eijnden.
+\newblock Building normalizing flows with stochastic interpolants.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Alemi et~al.(2017)Alemi, Fischer, Dillon, and Murphy]{alemi2017dvib}
+Alexander~A. Alemi, Ian Fischer, Joshua~V. Dillon, and Kevin Murphy.
+\newblock Deep variational information bottleneck.
+\newblock In \emph{International Conference on Learning Representations}, 2017.
+
+\bibitem[Barreto et~al.(2017)Barreto, Dabney, Munos, Hunt, Schaul, van Hasselt,
+  and Silver]{barreto2017sf}
+Andr{\'e} Barreto, Will Dabney, R{\'e}mi Munos, Jonathan~J. Hunt, Tom Schaul,
+  Hado~P. van Hasselt, and David Silver.
+\newblock Successor features for transfer in reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
+
+\bibitem[Barreto et~al.(2018)Barreto, Borsa, Quan, Schaul, Silver, Hessel,
+  Mankowitz, Zidek, and Munos]{barreto2018transfer}
+Andr{\'e} Barreto, Diana Borsa, John Quan, Tom Schaul, David Silver, Matteo
+  Hessel, Daniel Mankowitz, Augustin Zidek, and Remi Munos.
+\newblock Transfer in deep reinforcement learning using successor features and
+  generalised policy improvement.
+\newblock In \emph{International Conference on Machine Learning}, 2018.
+
+\bibitem[Bengio et~al.(2013)Bengio, L{\'e}onard, and
+  Courville]{bengio2013estimating}
+Yoshua Bengio, Nicholas L{\'e}onard, and Aaron Courville.
+\newblock Estimating or propagating gradients through stochastic neurons for
+  conditional computation.
+\newblock \emph{arXiv preprint arXiv:1308.3432}, 2013.
+
+\bibitem[Bishop(2006)]{bishop2006prml}
+Christopher~M. Bishop.
+\newblock Pattern recognition and machine learning.
+\newblock 2006.
+
+\bibitem[Bradbury et~al.(2018)Bradbury, Frostig, Hawkins, Johnson, Leary,
+  Maclaurin, Necula, Paszke, VanderPlas, Wanderman-Milne, and
+  Zhang]{bradbury2018jax}
+James Bradbury, Roy Frostig, Peter Hawkins, Matthew~James Johnson, Chris Leary,
+  Dougal Maclaurin, George Necula, Adam Paszke, Jake VanderPlas, Skye
+  Wanderman-Milne, and Qiao Zhang.
+\newblock {JAX}: composable transformations of {Python+NumPy} programs, 2018.
+\newblock URL \url{http://github.com/jax-ml/jax}.
+
+\bibitem[Chen et~al.(2021)Chen, Lu, Rajeswaran, Lee, Grover, Laskin, Abbeel,
+  Srinivas, and Mordatch]{chen2021dt}
+Lili Chen, Kevin Lu, Aravind Rajeswaran, Kimin Lee, Aditya Grover, Michael
+  Laskin, Pieter Abbeel, Aravind Srinivas, and Igor Mordatch.
+\newblock Decision transformer: Reinforcement learning via sequence modeling.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Chi et~al.(2023)Chi, Feng, Du, Xu, Cousineau, Burchfiel, and
+  Song]{chi2023diffusionpolicy}
+Cheng Chi, Siyuan Feng, Yilun Du, Zhenjia Xu, Eric Cousineau, Benjamin
+  Burchfiel, and Shuran Song.
+\newblock Diffusion policy: Visuomotor policy learning via action diffusion.
+\newblock In \emph{Robotics: Science and Systems}, 2023.
+
+\bibitem[Dayan(1993)]{dayan1993successor}
+Peter Dayan.
+\newblock Improving generalization for temporal difference learning: The
+  successor representation.
+\newblock \emph{Neural Computation}, 5\penalty0 (4):\penalty0 613--624, 1993.
+
+\bibitem[Devlin et~al.(2019)Devlin, Chang, Lee, and Toutanova]{devlin2018bert}
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock {BERT}: Pre-training of deep bidirectional transformers for language
+  understanding.
+\newblock In \emph{North American Chapter of the ACL (NAACL)}, 2019.
+
+\bibitem[Dong et~al.(2025)Dong, Zheng, Finn, Sadigh, and
+  Eysenbach]{dong2025valueflows}
+Perry Dong, Chongyi Zheng, Chelsea Finn, Dorsa Sadigh, and Benjamin Eysenbach.
+\newblock Value flows.
+\newblock \emph{arXiv preprint arXiv:2510.07650}, 2025.
+
+\bibitem[Duan et~al.(2016)Duan, Schulman, Chen, Bartlett, Sutskever, and
+  Abbeel]{duan2016rl2}
+Yan Duan, John Schulman, Xi~Chen, Peter~L. Bartlett, Ilya Sutskever, and Pieter
+  Abbeel.
+\newblock {RL}$^2$: Fast reinforcement learning via slow reinforcement
+  learning.
+\newblock \emph{arXiv preprint arXiv:1611.02779}, 2016.
+
+\bibitem[Espeholt et~al.(2018)Espeholt, Soyer, Munos, Simonyan, Mnih, Ward,
+  Doron, Firoiu, Harley, Dunning, et~al.]{espeholt2018impala}
+Lasse Espeholt, Hubert Soyer, Remi Munos, Karen Simonyan, Vlad Mnih, Tom Ward,
+  Yotam Doron, Vlad Firoiu, Tim Harley, Iain Dunning, et~al.
+\newblock {IMPALA}: Scalable distributed deep-{RL} with importance weighted
+  actor-learner architectures.
+\newblock In \emph{International Conference on Machine Learning}, 2018.
+
+\bibitem[Eysenbach et~al.(2019)Eysenbach, Gupta, Ibarz, and
+  Levine]{eysenbach2018diayn}
+Benjamin Eysenbach, Abhishek Gupta, Julian Ibarz, and Sergey Levine.
+\newblock Diversity is all you need: Learning skills without a reward function.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+
+\bibitem[Eysenbach et~al.(2022)Eysenbach, Zhang, Levine, and
+  Salakhutdinov]{eysenbach2022contrastive}
+Benjamin Eysenbach, Tianjun Zhang, Sergey Levine, and Russ~R. Salakhutdinov.
+\newblock Contrastive learning as goal-conditioned reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Farebrother et~al.(2025)Farebrother, Pirotta, Tirinzoni, Munos,
+  Lazaric, and Touati]{farebrother2025tdflows}
+Jesse Farebrother, Matteo Pirotta, Andrea Tirinzoni, Remi Munos, Alessandro
+  Lazaric, and Ahmed Touati.
+\newblock Temporal difference flows.
+\newblock In \emph{ICLR Workshop on World Models}, 2025.
+
+\bibitem[Ghosh et~al.(2021)Ghosh, Gupta, Reddy, Fu, Devin, Eysenbach, and
+  Levine]{ghosh2021gcsl}
+Dibya Ghosh, Abhishek Gupta, Ashwin Reddy, Justin Fu, Coline Devin, Benjamin
+  Eysenbach, and Sergey Levine.
+\newblock Learning to reach goals via iterated supervised learning.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Ghosh et~al.(2023)Ghosh, Bhateja, and Levine]{ghosh2023passive}
+Dibya Ghosh, Chethan~Anand Bhateja, and Sergey Levine.
+\newblock Reinforcement learning from passive data via latent intentions.
+\newblock In \emph{International Conference on Machine Learning}, 2023.
+
+\bibitem[Hausman et~al.(2017)Hausman, Chebotar, Schaal, Sukhatme, and
+  Lim]{hausman2017multimodal}
+Karol Hausman, Yevgen Chebotar, Stefan Schaal, Gaurav Sukhatme, and Joseph~J.
+  Lim.
+\newblock Multi-modal imitation learning from unstructured demonstrations using
+  generative adversarial nets.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
+
+\bibitem[Janner et~al.(2020)Janner, Mordatch, and Levine]{janner2020gamma}
+Michael Janner, Igor Mordatch, and Sergey Levine.
+\newblock Gamma-models: Generative temporal difference learning for
+  infinite-horizon prediction.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
+
+\bibitem[Janner et~al.(2022)Janner, Du, Tenenbaum, and
+  Levine]{janner2022diffuser}
+Michael Janner, Yilun Du, Joshua Tenenbaum, and Sergey Levine.
+\newblock Planning with diffusion models.
+\newblock In \emph{International Conference on Machine Learning}, 2022.
+
+\bibitem[Kingma and Welling(2013)]{kingma2013vae}
+Diederik~P. Kingma and Max Welling.
+\newblock Auto-encoding variational bayes.
+\newblock \emph{arXiv preprint arXiv:1312.6114}, 2013.
+
+\bibitem[Kostrikov et~al.(2022)Kostrikov, Nair, and Levine]{kostrikov2021iql}
+Ilya Kostrikov, Ashvin Nair, and Sergey Levine.
+\newblock Offline reinforcement learning with implicit {Q}-learning.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Laskin et~al.(2020)Laskin, Srinivas, and Abbeel]{laskin2020curl}
+Michael Laskin, Aravind Srinivas, and Pieter Abbeel.
+\newblock {CURL}: Contrastive unsupervised representations for reinforcement
+  learning.
+\newblock In \emph{International Conference on Machine Learning}, 2020.
+
+\bibitem[Li et~al.(2017)Li, Song, and Ermon]{li2017infogail}
+Yunzhu Li, Jiaming Song, and Stefano Ermon.
+\newblock {InfoGAIL}: Interpretable imitation learning from visual
+  demonstrations.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
+
+\bibitem[Lipman et~al.(2023)Lipman, Chen, Ben-Hamu, Nickel, and
+  Le]{lipman2023flow}
+Yaron Lipman, Ricky T.~Q. Chen, Heli Ben-Hamu, Maximilian Nickel, and Matthew
+  Le.
+\newblock Flow matching for generative modeling.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Liu et~al.(2023)Liu, Gong, and Liu]{liu2023rectified}
+Xingchao Liu, Chengyue Gong, and Qiang Liu.
+\newblock Flow straight and fast: Learning to generate and transfer data with
+  rectified flow.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Ma et~al.(2023)Ma, Sodhani, Jayaraman, Bastani, Kumar, and
+  Zhang]{ma2023vip}
+Yecheng~Jason Ma, Shagun Sodhani, Dinesh Jayaraman, Osbert Bastani, Vikash
+  Kumar, and Amy Zhang.
+\newblock {VIP}: Towards universal visual reward and representation via
+  value-implicit pre-training.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Nair et~al.(2023)Nair, Rajeswaran, Kumar, Finn, and
+  Gupta]{nair2023r3m}
+Suraj Nair, Aravind Rajeswaran, Vikash Kumar, Chelsea Finn, and Abhinav Gupta.
+\newblock {R3M}: A universal visual representation for robot manipulation.
+\newblock In \emph{Conference on Robot Learning}, 2023.
+
+\bibitem[Parisi et~al.(2022)Parisi, Rajeswaran, Purushwalkam, and
+  Gupta]{parisi2022pretrained}
+Simone Parisi, Aravind Rajeswaran, Senthil Purushwalkam, and Abhinav Gupta.
+\newblock The unsurprising effectiveness of pre-trained vision models for
+  control.
+\newblock In \emph{International Conference on Machine Learning}, 2022.
+
+\bibitem[Park et~al.(2023)Park, Ghosh, Eysenbach, and Levine]{park2023hiql}
+Seohong Park, Dibya Ghosh, Benjamin Eysenbach, and Sergey Levine.
+\newblock {HIQL}: Offline goal-conditioned {RL} with latent states as actions.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2023.
+
+\bibitem[Park et~al.(2024)Park, Kreiman, and Levine]{park2024hilp}
+Seohong Park, Tobias Kreiman, and Sergey Levine.
+\newblock Foundation policies with {Hilbert} representations.
+\newblock In \emph{International Conference on Machine Learning}, 2024.
+
+\bibitem[Park et~al.(2025{\natexlab{a}})Park, Frans, Eysenbach, and
+  Levine]{park2025ogbench}
+Seohong Park, Kevin Frans, Benjamin Eysenbach, and Sergey Levine.
+\newblock {OGBench}: Benchmarking offline goal-conditioned {RL}.
+\newblock In \emph{International Conference on Learning Representations},
+  2025{\natexlab{a}}.
+
+\bibitem[Park et~al.(2025{\natexlab{b}})Park, Li, and Levine]{park2025flowq}
+Seohong Park, Qiyang Li, and Sergey Levine.
+\newblock Flow {Q}-learning.
+\newblock \emph{arXiv preprint arXiv:2502.02538}, 2025{\natexlab{b}}.
+
+\bibitem[Rakelly et~al.(2019)Rakelly, Zhou, Finn, Levine, and
+  Quillen]{rakelly2019pearl}
+Kate Rakelly, Aurick Zhou, Chelsea Finn, Sergey Levine, and Deirdre Quillen.
+\newblock Efficient off-policy meta-reinforcement learning via probabilistic
+  context variables.
+\newblock In \emph{International Conference on Machine Learning}, 2019.
+
+\bibitem[Reed et~al.(2022)Reed, Zolna, Parisotto, Colmenarejo, Novikov,
+  Barth-Maron, Gimenez, Sulsky, Kay, Springenberg, et~al.]{reed2022gato}
+Scott Reed, Konrad Zolna, Emilio Parisotto, Sergio~Gomez Colmenarejo, Alexander
+  Novikov, Gabriel Barth-Maron, Mai Gimenez, Yury Sulsky, Jackie Kay,
+  Jost~Tobias Springenberg, et~al.
+\newblock A generalist agent.
+\newblock In \emph{Transactions on Machine Learning Research}, 2022.
+
+\bibitem[Rombach et~al.(2022)Rombach, Blattmann, Lorenz, Esser, and
+  Ommer]{rombach2022ldm}
+Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Bj{\"o}rn
+  Ommer.
+\newblock High-resolution image synthesis with latent diffusion models.
+\newblock In \emph{IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition}, 2022.
+
+\bibitem[Sharma et~al.(2019)Sharma, Gu, Levine, Kumar, and
+  Hausman]{sharma2019dads}
+Archit Sharma, Shixiang Gu, Sergey Levine, Vikash Kumar, and Karol Hausman.
+\newblock Dynamics-aware unsupervised discovery of skills.
+\newblock \emph{arXiv preprint arXiv:1907.01657}, 2019.
+
+\bibitem[Tarasov et~al.(2023)Tarasov, Kurenkov, Nikulin, and
+  Kolesnikov]{tarasov2023revisiting}
+Denis Tarasov, Vladislav Kurenkov, Alexander Nikulin, and Sergey Kolesnikov.
+\newblock Revisiting the minimalist approach to offline reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2023.
+
+\bibitem[Tishby et~al.(2000)Tishby, Pereira, and Bialek]{tishby2000ib}
+Naftali Tishby, Fernando~C. Pereira, and William Bialek.
+\newblock The information bottleneck method.
+\newblock \emph{arXiv preprint physics/0004057}, 2000.
+
+\bibitem[Touati and Ollivier(2021)]{touati2021fb}
+Ahmed Touati and Yann Ollivier.
+\newblock Learning one representation to optimize all rewards.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Touati et~al.(2023)Touati, Rapin, and Ollivier]{touati2023does}
+Ahmed Touati, J{\'e}r{\'e}my Rapin, and Yann Ollivier.
+\newblock Does zero-shot reinforcement learning exist?
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[van~der Maaten and Hinton(2008)]{maaten2008tsne}
+Laurens van~der Maaten and Geoffrey Hinton.
+\newblock Visualizing data using {t-SNE}.
+\newblock \emph{Journal of Machine Learning Research}, 9:\penalty0 2579--2605,
+  2008.
+
+\bibitem[Vaswani et~al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez,
+  Kaiser, and Polosukhin]{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
+
+\bibitem[Xiao et~al.(2022)Xiao, Radosavovic, Darrell, and
+  Malik]{xiao2022masked}
+Tete Xiao, Ilija Radosavovic, Trevor Darrell, and Jitendra Malik.
+\newblock Masked visual pre-training for motor control.
+\newblock \emph{arXiv preprint arXiv:2203.06173}, 2022.
+
+\bibitem[Yang et~al.(2022)Yang, Lu, Li, Sun, Fang, Du, Li, Han, and
+  Zhang]{yang2021wgcsl}
+Rui Yang, Yong Lu, Wenhao Li, Hao Sun, Meng Fang, Yali Du, Xiu Li, Lei Han, and
+  Chongjie Zhang.
+\newblock Rethinking goal-conditioned supervised learning and its connection to
+  offline {RL}.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Yang et~al.(2016)Yang, Yang, Dyer, He, Smola, and
+  Hovy]{yang2016hierarchical}
+Zichao Yang, Diyi Yang, Chris Dyer, Xiaodong He, Alex Smola, and Eduard Hovy.
+\newblock Hierarchical attention networks for document classification.
+\newblock In \emph{North American Chapter of the ACL (NAACL)}, 2016.
+
+\bibitem[Zheng et~al.(2024{\natexlab{a}})Zheng, Eysenbach, Walke, Yin, Fang,
+  Salakhutdinov, and Levine]{zheng2024stabilizing}
+Chongyi Zheng, Benjamin Eysenbach, Homer~Rich Walke, Patrick Yin, Kuan Fang,
+  Ruslan Salakhutdinov, and Sergey Levine.
+\newblock Stabilizing contrastive {RL}: Techniques for robotic goal reaching
+  from offline data.
+\newblock In \emph{International Conference on Learning Representations},
+  2024{\natexlab{a}}.
+
+\bibitem[Zheng et~al.(2024{\natexlab{b}})Zheng, Salakhutdinov, and
+  Eysenbach]{zheng2024cdpc}
+Chongyi Zheng, Ruslan Salakhutdinov, and Benjamin Eysenbach.
+\newblock Contrastive difference predictive coding.
+\newblock In \emph{International Conference on Learning Representations},
+  2024{\natexlab{b}}.
+
+\bibitem[Zheng et~al.(2025)]{zheng2025infom}
+Chongyi Zheng et~al.
+\newblock Intention-conditioned flow occupancy models for offline
+  goal-conditioned reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:2502.XXXXX}, 2025.
+
+\bibitem[Zheng et~al.(2022)Zheng, Zhang, and Grover]{zheng2022odt}
+Qinqing Zheng, Amy Zhang, and Aditya Grover.
+\newblock Online decision transformer.
+\newblock In \emph{International Conference on Machine Learning}, 2022.
+
+\end{thebibliography}

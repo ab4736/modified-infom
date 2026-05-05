@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 import xml.etree.ElementTree as ET
 
 import jax
@@ -64,6 +64,10 @@ def evaluate(
     trajs = []
     stats = defaultdict(list)
 
+    use_online_z = agent.config.get('use_actor_z', False)
+    if use_online_z:
+        K = agent.config.get('window_size', 1)
+
     renders = []
     for i in trange(num_eval_episodes + num_video_episodes):
         traj = defaultdict(list)
@@ -75,13 +79,34 @@ def evaluate(
         done = False
         step = 0
         render = []
+
+        if use_online_z:
+            obs_window = deque(maxlen=K)
+            act_window = deque(maxlen=K)
+            current_z = np.zeros((agent.config['latent_dim'],), dtype=np.float32)
+
         while not done:
-            if inferred_latent is not None:
-                action = actor_fn(observations=observation, latents=inferred_latent, temperature=eval_temperature)
+            if use_online_z:
+                latents = current_z
+            elif inferred_latent is not None:
+                latents = inferred_latent
+            else:
+                latents = None
+
+            if latents is not None:
+                action = actor_fn(observations=observation, latents=latents, temperature=eval_temperature)
             else:
                 action = actor_fn(observations=observation, temperature=eval_temperature)
             action = np.array(action)
             action = np.clip(action, -1, 1)
+
+            if use_online_z:
+                obs_window.append(np.array(observation))
+                act_window.append(action)
+                if len(obs_window) == K:
+                    win_obs = np.array(list(obs_window))[None]  # [1, K, obs_dim]
+                    win_acts = np.array(list(act_window))[None]  # [1, K, act_dim]
+                    current_z = np.array(agent.infer_z(win_obs, win_acts))  # [latent_dim]
 
             next_observation, reward, terminated, truncated, info = env.step(action)
             if dataset is not None:

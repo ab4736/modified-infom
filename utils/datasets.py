@@ -74,6 +74,7 @@ class Dataset(FrozenDict):
         self.return_next_actions = False  # Whether to additionally return next actions; set outside the class.
 
         self._prestacked = False
+        self.window_size = None  # Window length for attention encoder; set outside the class.
 
         # observation statistics
         self.obs_mean = None
@@ -83,6 +84,7 @@ class Dataset(FrozenDict):
         self.normalized_obs_max = None
         self.normalized_obs_min = None
         self.epsilon = 1e-8  # for normalization
+        self._lazy_normalize = False  # if True, normalize per-batch in sample() instead of upfront
 
         # Compute terminal and initial locations.
         self.terminal_locs = np.nonzero(self['terminals'] > 0)[0]
@@ -91,6 +93,22 @@ class Dataset(FrozenDict):
     @staticmethod
     def normalize(observations, obs_mean, obs_var, obs_max, obs_min,
                   normalizer_type='none', epsilon=1e-8):
+        # If observations have been frame-stacked (channels multiplied by frame_stack)
+        # the provided obs_* statistics may be for a single-frame (3 channels).
+        # Tile per-channel stats to match the stacked-channel size when needed.
+        try:
+            obs_ch = observations.shape[-1]
+        except Exception:
+            obs_ch = None
+        if obs_min is not None and obs_ch is not None and obs_min.ndim >= 3:
+            stat_ch = obs_min.shape[-1]
+            if obs_ch != stat_ch and obs_ch % stat_ch == 0:
+                factor = obs_ch // stat_ch
+                obs_mean = np.tile(obs_mean, factor)
+                obs_var = np.tile(obs_var, factor)
+                obs_max = np.tile(obs_max, factor)
+                obs_min = np.tile(obs_min, factor)
+
         if normalizer_type == 'normal':
             return (observations - obs_mean) / np.sqrt(
                 obs_var + epsilon
@@ -107,6 +125,24 @@ class Dataset(FrozenDict):
 
     def normalize_observations(self, observations=None):
         if observations is None:
+            assert 'observations' in self
+            assert 'next_observations' in self
+
+            # For uint8 image observations, avoid the massive float64 intermediates
+            # that np.mean/np.var create (e.g. 98 GB for a 1M-frame dataset).
+            # Use bounded normalization with hardcoded [0, 255] range instead.
+            if self['observations'].dtype == np.uint8:
+                obs_shape = self['observations'].shape[1:]
+                self.obs_min = np.zeros(obs_shape, dtype=np.float32)
+                self.obs_max = np.full(obs_shape, 255.0, dtype=np.float32)
+                self.obs_mean = np.full(obs_shape, 127.5, dtype=np.float32)
+                self.obs_var = np.full(obs_shape, 127.5 ** 2, dtype=np.float32)
+                self.obs_norm_type = 'bounded'
+                self.normalized_obs_max = np.ones(obs_shape, dtype=np.float32)
+                self.normalized_obs_min = -np.ones(obs_shape, dtype=np.float32)
+                self._lazy_normalize = True
+                return
+
             self.obs_mean = np.mean(self['observations'], axis=0)
             self.obs_var = np.var(self['observations'], axis=0)
             self.obs_max = np.max(self['observations'], axis=0)
@@ -123,11 +159,6 @@ class Dataset(FrozenDict):
                 self.obs_norm_type, self.epsilon
             )
 
-            assert 'observations' in self
-            assert 'next_observations' in self
-
-            observations = self['observations']
-
             self._dict['observations'] = self.normalize(
                 self['observations'], self.obs_mean, self.obs_var,
                 self.obs_max, self.obs_min,
@@ -138,6 +169,7 @@ class Dataset(FrozenDict):
                 self.obs_max, self.obs_min,
                 self.obs_norm_type, self.epsilon
             )
+            return
 
         observations = self.normalize(
             observations, self.obs_mean, self.obs_var,
@@ -177,13 +209,12 @@ class Dataset(FrozenDict):
         """Sample a batch of transitions."""
         # prestack frames for faster batch sampling
         # warning: require a large amount of cpu mems
-        if (self.frame_stack is not None) and (not self._prestacked):
+        # only prestack if explicitly enabled (default off to save memory)
+        if (self.frame_stack is not None) and (not self._prestacked) and getattr(self, '_prestack_enabled', False):
             self._prestack_frames()
         if idxs is None:
             idxs = self.get_random_idxs(batch_size)
         batch = self.get_subset(idxs)
-        batch['observation_min'] = self.normalized_obs_min
-        batch['observation_max'] = self.normalized_obs_max
         if (self.frame_stack is not None) and (not self._prestacked):
             # Stack frames.
             initial_state_idxs = self.initial_locs[np.searchsorted(self.initial_locs, idxs, side='right') - 1]
@@ -199,6 +230,21 @@ class Dataset(FrozenDict):
 
             batch['observations'] = jax.tree_util.tree_map(lambda *args: np.concatenate(args, axis=-1), *obs)
             batch['next_observations'] = jax.tree_util.tree_map(lambda *args: np.concatenate(args, axis=-1), *next_obs)
+        
+        # Set observation bounds AFTER frame stacking, tiling if needed
+        obs_min = self.normalized_obs_min
+        obs_max = self.normalized_obs_max
+        if (self.frame_stack is not None) and obs_min is not None and obs_min.ndim >= 2:
+            # Tile per-channel stats if observations were frame-stacked
+            obs_shape = batch['observations'].shape
+            obs_ch = obs_shape[-1]
+            stat_ch = obs_min.shape[-1]
+            if obs_ch != stat_ch and obs_ch % stat_ch == 0:
+                factor = obs_ch // stat_ch
+                obs_min = np.tile(obs_min, factor)
+                obs_max = np.tile(obs_max, factor)
+        batch['observation_min'] = obs_min
+        batch['observation_max'] = obs_max
         if self.p_aug is not None:
             # Apply random-crop image augmentation.
             if np.random.rand() < self.p_aug:
@@ -207,6 +253,49 @@ class Dataset(FrozenDict):
                 else:
                     for i in range(self.num_aug):
                         augment(batch, ['observations', 'next_observations'], 'aug{}_'.format(i + 1))
+
+        if self.window_size is not None:
+            # Build a window of K consecutive (obs, act) pairs ending at the next transition.
+            # window[:, -1, :] == next_observations (the transition used by the MLP/MoG encoder).
+            K = self.window_size
+            next_idxs = np.minimum(idxs + 1, self.size - 1)
+            traj_start_idxs = self.initial_locs[
+                np.searchsorted(self.initial_locs, idxs, side='right') - 1]
+            window_obs_list = []
+            window_act_list = []
+            for k in range(K):
+                j = K - 1 - k  # steps before the most recent entry
+                cur_idxs = np.maximum(next_idxs - j, traj_start_idxs)
+                if self.frame_stack is not None:
+                    # Frame-stack each window entry to match the canonical obs format.
+                    frame_obs = []
+                    for fi in reversed(range(self.frame_stack)):
+                        fi_idxs = np.maximum(cur_idxs - fi, traj_start_idxs)
+                        frame_obs.append(self['observations'][fi_idxs])
+                    window_obs_list.append(np.concatenate(frame_obs, axis=-1))
+                else:
+                    window_obs_list.append(self['observations'][cur_idxs])
+                window_act_list.append(self['actions'][cur_idxs])
+            batch['window_next_observations'] = np.stack(window_obs_list, axis=1)
+            batch['window_next_actions'] = np.stack(window_act_list, axis=1)
+
+        # Apply normalization lazily for image datasets (avoids 100+ GB float32 upfront).
+        if self._lazy_normalize:
+            for key in ('observations', 'next_observations'):
+                if key in batch:
+                    batch[key] = self.normalize(
+                        batch[key].astype(np.float32),
+                        self.obs_mean, self.obs_var,
+                        self.obs_max, self.obs_min,
+                        self.obs_norm_type, self.epsilon,
+                    )
+            if 'window_next_observations' in batch:
+                batch['window_next_observations'] = self.normalize(
+                    batch['window_next_observations'].astype(np.float32),
+                    self.obs_mean, self.obs_var,
+                    self.obs_max, self.obs_min,
+                    self.obs_norm_type, self.epsilon,
+                )
 
         return batch
 

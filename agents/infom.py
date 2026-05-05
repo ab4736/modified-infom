@@ -10,7 +10,7 @@ import optax
 
 from utils.encoders import encoder_modules
 from utils.flax_utils import ModuleDict, TrainState, nonpytree_field
-from utils.networks import VectorField, Actor, IntentionEncoder, Value
+from utils.networks import VectorField, Actor, IntentionEncoder, AttentionIntentionEncoder, BoundaryAttentionIntentionEncoder, Value
 
 
 class InFOMAgent(flax.struct.PyTreeNode):
@@ -65,7 +65,11 @@ class InFOMAgent(flax.struct.PyTreeNode):
                 dtype=observations.dtype,
             )
         elif self.config['critic_latent_type'] == 'encoding':
-            latent_dist = self.network.select('intention_encoder')(next_observations, next_actions)
+            if self.config['encoder_type'] in ['attention', 'boundary_attention']:
+                latent_dist = self.network.select('intention_encoder')(
+                    batch['window_next_observations'], batch['window_next_actions'])
+            else:
+                latent_dist = self.network.select('intention_encoder')(next_observations, next_actions)
             latents = latent_dist.sample(seed=latent_rng, sample_shape=self.config['num_flow_goals'])
         flow_goals = self.compute_fwd_flow_goals(
             noises,
@@ -115,15 +119,19 @@ class InFOMAgent(flax.struct.PyTreeNode):
             next_observations = self.network.select('target_critic_vf_encoder')(
                 batch['next_observations'])
 
-        # infer z using (s', a')
+        # infer z using (s', a') or a window of K transitions for attention encoder
         rng, latent_rng = jax.random.split(rng)
-        latent_dist = self.network.select('intention_encoder')(
-            batch['next_observations'], next_actions, params=grad_params)
+        if self.config['encoder_type'] in ['attention', 'boundary_attention']:
+            latent_dist = self.network.select('intention_encoder')(
+                batch['window_next_observations'], batch['window_next_actions'],
+                params=grad_params)
+        else:
+            latent_dist = self.network.select('intention_encoder')(
+                batch['next_observations'], next_actions, params=grad_params)
         latents = latent_dist.sample(seed=latent_rng)
 
-        means = latent_dist.mean()
-        log_stds = jnp.log(latent_dist.stddev())
-        kl_loss = -0.5 * (1 + 2 * log_stds - means ** 2 - jnp.exp(2 * log_stds)).mean()
+        kl_loss = latent_dist.kl_loss()
+        mixing_probs = latent_dist.mixing_probs()
 
         # SARSA^2 flow matching for occupancy models
         rng, time_rng, current_noise_rng, future_noise_rng = jax.random.split(rng, 4)
@@ -171,18 +179,31 @@ class InFOMAgent(flax.struct.PyTreeNode):
             'neg_elbo_loss': neg_elbo_loss,
             'flow_matching_loss': flow_matching_loss,
             'kl_loss': kl_loss,
+            'mixing_probs_mean': mixing_probs.mean(),
+            'mixing_probs_entropy': (-mixing_probs * jnp.log(mixing_probs + 1e-8)).sum(axis=-1).mean(),
             'flow_future_obs_max': flow_future_observations.max(),
             'flow_future_obs_min': flow_future_observations.min(),
             'current_flow_matching_loss': current_flow_matching_loss.mean(),
             'future_flow_matching_loss': future_flow_matching_loss.mean(),
         }
 
-    def behavioral_cloning_loss(self, batch, grad_params):
+    def behavioral_cloning_loss(self, batch, grad_params, rng=None):
         """Compute the behavioral cloning loss for pretraining."""
         observations = batch['observations']
         actions = batch['actions']
 
-        dist = self.network.select('actor')(observations, params=grad_params)
+        latents = None
+        if self.config.get('use_actor_z', False) and rng is not None:
+            rng, latent_rng = jax.random.split(rng)
+            if self.config['encoder_type'] in ['attention', 'boundary_attention']:
+                latent_dist = self.network.select('intention_encoder')(
+                    batch['window_next_observations'], batch['window_next_actions'])
+            else:
+                latent_dist = self.network.select('intention_encoder')(
+                    batch['next_observations'], batch['next_actions'])
+            latents = latent_dist.sample(seed=latent_rng)
+
+        dist = self.network.select('actor')(observations, latents=latents, params=grad_params)
         log_prob = dist.log_prob(actions)
         bc_loss = -log_prob.mean()
 
@@ -199,8 +220,19 @@ class InFOMAgent(flax.struct.PyTreeNode):
         observations = batch['observations']
         actions = batch['actions']
 
+        latents = None
+        if self.config.get('use_actor_z', False):
+            rng, latent_rng = jax.random.split(rng)
+            if self.config['encoder_type'] in ['attention', 'boundary_attention']:
+                latent_dist = self.network.select('intention_encoder')(
+                    batch['window_next_observations'], batch['window_next_actions'])
+            else:
+                latent_dist = self.network.select('intention_encoder')(
+                    batch['next_observations'], batch['next_actions'])
+            latents = jax.lax.stop_gradient(latent_dist.sample(seed=latent_rng))
+
         # DDPG+BC loss.
-        dist = self.network.select('actor')(observations, params=grad_params)
+        dist = self.network.select('actor')(observations, latents=latents, params=grad_params)
         if self.config['const_std']:
             q_actions = jnp.clip(dist.mode(), -1, 1)
         else:
@@ -259,7 +291,7 @@ class InFOMAgent(flax.struct.PyTreeNode):
             vf = self.network.select(module_name)(
                 noisy_goals, times, observations, actions, latents)
             new_noisy_goals = noisy_goals + vf * jnp.expand_dims(step_size, axis=-1)
-            if self.config['clip_flow_goals']:
+            if self.config['clip_flow_goals'] and self.config['encoder'] is None:
                 new_noisy_goals = jnp.clip(new_noisy_goals, observation_min + 1e-5, observation_max - 1e-5)
 
             return (new_noisy_goals,), None
@@ -275,7 +307,7 @@ class InFOMAgent(flax.struct.PyTreeNode):
         info = {}
         rng = rng if rng is not None else self.rng
 
-        rng, flow_occupancy_rng = jax.random.split(rng)
+        rng, flow_occupancy_rng, bc_rng = jax.random.split(rng, 3)
 
         flow_occupancy_loss, flow_occupancy_info = self.flow_occupancy_loss(
             batch, grad_params, flow_occupancy_rng)
@@ -283,7 +315,7 @@ class InFOMAgent(flax.struct.PyTreeNode):
             info[f'flow_occupancy/{k}'] = v
 
         bc_loss, bc_info = self.behavioral_cloning_loss(
-            batch, grad_params)
+            batch, grad_params, rng=bc_rng)
         for k, v in bc_info.items():
             info[f'bc/{k}'] = v
 
@@ -373,15 +405,34 @@ class InFOMAgent(flax.struct.PyTreeNode):
     def sample_actions(
         self,
         observations,
+        latents=None,
         seed=None,
         temperature=1.0,
     ):
         """Sample actions from the actor."""
-        dist = self.network.select('actor')(observations, temperature=temperature)
+        dist = self.network.select('actor')(observations, latents=latents, temperature=temperature)
         actions = dist.sample(seed=seed)
         actions = jnp.clip(actions, -1, 1)
 
         return actions
+
+    @jax.jit
+    def infer_z(self, window_observations, window_actions):
+        """Infer intention latent z from a window of recent (obs, action) pairs.
+
+        Args:
+            window_observations: [1, K, obs_dim] or [1, obs_dim] for MLP.
+            window_actions: [1, K, act_dim] or [1, act_dim] for MLP.
+        Returns:
+            z: [latent_dim] intention vector (mode of distribution).
+        """
+        if self.config['encoder_type'] in ['attention', 'boundary_attention']:
+            latent_dist = self.network.select('intention_encoder')(
+                window_observations, window_actions)
+        else:
+            latent_dist = self.network.select('intention_encoder')(
+                window_observations[:, -1, :], window_actions[:, -1, :])
+        return latent_dist.mean()[0]
 
     @classmethod
     def create(
@@ -434,12 +485,35 @@ class InFOMAgent(flax.struct.PyTreeNode):
             num_ensembles=2,
             encoder=encoders.get('critic'),
         )
-        intention_encoder_def = IntentionEncoder(
-            hidden_dims=config['intention_encoder_hidden_dims'],
-            latent_dim=config['latent_dim'],
-            layer_norm=config['intention_encoder_layer_norm'],
-            encoder=encoders.get('intention')
-        )
+        if config['encoder_type'] == 'attention':
+            intention_encoder_def = AttentionIntentionEncoder(
+                hidden_dims=config['intention_encoder_hidden_dims'],
+                latent_dim=config['latent_dim'],
+                window_size=config['window_size'],
+                num_heads=config['num_heads'],
+                num_layers=config['num_transformer_layers'],
+                layer_norm=config['intention_encoder_layer_norm'],
+                encoder=encoders.get('intention'),
+            )
+        elif config['encoder_type'] == 'boundary_attention':
+            intention_encoder_def = BoundaryAttentionIntentionEncoder(
+                hidden_dims=config['intention_encoder_hidden_dims'],
+                latent_dim=config['latent_dim'],
+                window_size=config['window_size'],
+                num_heads=config['num_heads'],
+                num_layers=config['num_transformer_layers'],
+                layer_norm=config['intention_encoder_layer_norm'],
+                encoder=encoders.get('intention'),
+            )
+        else:
+            nc = config['num_components'] if config['encoder_type'] == 'mog' else 1
+            intention_encoder_def = IntentionEncoder(
+                hidden_dims=config['intention_encoder_hidden_dims'],
+                latent_dim=config['latent_dim'],
+                num_components=nc,
+                layer_norm=config['intention_encoder_layer_norm'],
+                encoder=encoders.get('intention'),
+            )
         critic_vf_def = VectorField(
             vector_dim=obs_dim,
             hidden_dims=config['value_hidden_dims'],
@@ -459,6 +533,18 @@ class InFOMAgent(flax.struct.PyTreeNode):
             layer_norm=config['reward_layer_norm'],
         )
 
+        if config['encoder_type'] in ['attention', 'boundary_attention']:
+            K = config['window_size']
+            ex_window_obs = jnp.ones(
+                (ex_orig_observations.shape[0], K, *ex_orig_observations.shape[1:]),
+                dtype=ex_orig_observations.dtype)
+            ex_window_acts = jnp.ones(
+                (ex_actions.shape[0], K, ex_actions.shape[-1]),
+                dtype=ex_actions.dtype)
+            intention_encoder_inputs = (ex_window_obs, ex_window_acts)
+        else:
+            intention_encoder_inputs = (ex_orig_observations, ex_actions)
+
         network_info = dict(
             critic=(critic_def, (ex_orig_observations, ex_actions)),
             critic_vf=(critic_vf_def, (
@@ -467,9 +553,9 @@ class InFOMAgent(flax.struct.PyTreeNode):
             target_critic_vf=(copy.deepcopy(critic_vf_def), (
                 ex_observations, ex_times,
                 ex_observations, ex_actions, ex_latents)),
-            intention_encoder=(intention_encoder_def, (
-                ex_orig_observations, ex_actions)),
-            actor=(actor_def, (ex_orig_observations, )),
+            intention_encoder=(intention_encoder_def, intention_encoder_inputs),
+            actor=(actor_def, (ex_orig_observations,) if not config.get('use_actor_z', False)
+                   else (ex_orig_observations, ex_latents)),
             reward=(reward_def, (ex_observations,)),
         )
         if config['encoder'] is not None:
@@ -510,6 +596,11 @@ def get_config():
             actor_layer_norm=False,  # Whether to use layer normalization for the actor.
             reward_layer_norm=True,  # Whether to use layer normalization for the reward.
             latent_dim=512,  # Latent dimension for intention latents.
+            encoder_type='mog',  # Encoder architecture: 'mlp', 'mog', 'attention', 'boundary_attention'.
+            num_components=3,  # Number of mixture components (used when encoder_type='mog').
+            window_size=4,  # Context window length (used when encoder_type='attention').
+            num_heads=4,  # Attention heads (used when encoder_type='attention').
+            num_transformer_layers=2,  # Transformer depth (used when encoder_type='attention').
             discount=0.99,  # Discount factor.
             tau=0.005,  # Target network update rate.
             expectile=0.9,  # IQL style expectile.
@@ -523,6 +614,7 @@ def get_config():
             const_std=True,  # Whether to use constant standard deviation for the actor.
             num_flow_steps=10,  # Number of flow steps.
             normalize_q_loss=False,  # Whether to normalize the Q loss.
+            use_actor_z=False,  # Whether to condition the actor on the inferred intention latent z.
             encoder=ml_collections.config_dict.placeholder(str),  # Encoder name ('mlp', 'impala_small', etc.).
         )
     )

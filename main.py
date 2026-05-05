@@ -101,6 +101,9 @@ def main(_):
             if config['agent_name'] in ['infom', 'rebrac', 'dino_rebrac', 'mbpo_rebrac',
                                         'td_infonce', 'fb_repr_fom', 'hilp_fom']:
                 dataset.return_next_actions = True
+            if (config['agent_name'] == 'infom'
+                    and config.get('encoder_type', 'mog') in ['attention', 'boundary_attention']):
+                dataset.window_size = config['window_size']
             dataset.normalize_observations()
     if config['agent_name'] in ['crl_infonce', 'td_infonce', 'hilp']:
         config['p_aug'] = FLAGS.p_aug

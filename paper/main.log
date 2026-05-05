@@ -1,0 +1,123 @@
+        {zheng2025infom}.
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.141 data~\citep
+                 {ghosh2021gcsl,park2023hiql,eysenbach2022contrastive,park20...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.142 IQL~\citep
+                {kostrikov2021iql} provides the advantage-weighted
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (142.60406pt too wide) in paragraph at lines 137--144
+\OT1/ptm/m/n/10 (-20) tion dur-ing pre-training. A large body of work learns go
+al-reaching from such data ghosh2021gcsl,park2023hiql,eysenbach2022contrastive,
+park2025ogbench.
+ []
+
+! Undefined control sequence.
+l.146 Following prior work~\citep
+                                 {dayan1993successor,janner2020gamma,
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (57.56747pt too wide) in paragraph at lines 146--150
+[] []\OT1/ptm/b/n/10 (-20) Dis-counted state oc-cu-pancy.[] \OT1/ptm/m/n/10 (-2
+0) Fol-low-ing prior work dayan1993successor,janner2020gamma, touati2021fb,eyse
+nbach2022contrastive,
+ []
+
+! Undefined control sequence.
+l.156 measure~\citep
+                    {barreto2017sf,touati2021fb}.
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.159 Flow matching~\citep
+                          {lipman2023flow,liu2023rectified,albergo2023stocha...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.162 flow matching objective~\citep
+                                    {farebrother2025tdflows,ma2023vip}.
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.165 \base{}~\citep
+                    {zheng2025infom} adds a latent intention $z$
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.170 ...d s, z)$ is trained with IQL-style~\citep
+                                                  {kostrikov2021iql}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+LaTeX Warning: Reference `fig:architecture' on page 2 undefined on input line 1
+81.
+
+
+Overfull \hbox (4.62766pt too wide) in paragraph at lines 228--234
+ [][] 
+ []
+
+! Undefined control sequence.
+l.251 ...terized sample uses Gumbel-softmax~\citep
+                                                  {jang2017gumbel}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.258 ...single-step MLP with a transformer~\citep
+                                                  {vaswani2017attention}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[2
+!pdfTeX error: pdflatex: fflush() failed (Disk quota exceeded)
+ ==> Fatal error occurred, no output PDF file produced!
